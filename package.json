@@ -1,7 +1,7 @@
 {
-  "name": "@audits/truffle-test-generator",
-  "author": "Thomas Hodges (thomas@audits.dev)",
-  "version": "1.0.1",
+  "name": "@cryptofc/truffle-test-generator",
+  "author": "Agu Rodríguez",
+  "version": "1.0.2",
   "description": "A test file generator for the Truffle framework",
   "bin": {
     "ttg": "./testGen.js"
@@ -13,10 +13,10 @@
     "generator",
     "ethereum"
   ],
-  "homepage": "https://audits.dev",
+  "homepage": "https://agurodriguez.net",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/audits-dev/truffle-test-generator.git"
+    "url": "git+https://github.com/cryptofc/truffle-test-generator.git"
   },
   "license": "MIT",
   "dependencies": {

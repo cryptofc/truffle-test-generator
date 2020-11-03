@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
 /**
- * Audits.dev - Truffle Test Generator
+ * cryptofc - Truffle Test Generator
  */
 
 const fs = require('fs')
 
 const getConstructor = (contract) => {
   for (let i = 0; i < contract.abi.length; i++) {
-    if(contract.abi[i].type == 'constructor') {
+    if (contract.abi[i].type == 'constructor') {
       return contract.abi[i]
     }
   }
@@ -16,7 +16,7 @@ const getConstructor = (contract) => {
 
 const genConstructorParams = (constructor) => {
   let lines = []
-  if(constructor != undefined) {
+  if (constructor != undefined) {
     for (let i = 0; i < constructor.inputs.length; i++) {
       lines.push(constructor.inputs[i].name)
     }
@@ -26,7 +26,7 @@ const genConstructorParams = (constructor) => {
 
 const genConstructorLine = (constructor) => {
   let line = ''
-  if(constructor != undefined) {
+  if (constructor != undefined) {
     for (let i = 0; i < constructor.inputs.length; i++) {
       line += constructor.inputs[i].name + ', '
     }
@@ -55,7 +55,7 @@ contract('${contract.contractName}', (accounts) => {
 
   let ${contract.contractName.toLowerCase()}`
 
-  if(constructorParams.length > 0) {
+  if (constructorParams.length > 0) {
     testContent += `
 
   // Be sure to update these constructor values`
@@ -73,7 +73,7 @@ contract('${contract.contractName}', (accounts) => {
 `
 
   for (let i = 0; i < contract.abi.length; i++) {
-    if(contract.abi[i].type == 'function') {
+    if (contract.abi[i].type == 'function') {
       testContent += `
   describe('${contract.abi[i].name}', () => {
 
@@ -89,28 +89,33 @@ contract('${contract.contractName}', (accounts) => {
 }
 
 const cwd = process.cwd()
-const jsonFile = cwd + `/build/contracts/${process.argv[2]}.json`
-let testFile = cwd + `/test/${process.argv[2]}_test.js`
-let contract
+const packageJsonFile = JSON.parse(fs.readFileSync(cwd + '/package.json', 'utf8'))
+const { truffleTestGenerator } = packageJsonFile
+const configContractsPath = (truffleTestGenerator && truffleTestGenerator.contractsPath) || "build/contracts"
+const configTestsPath = (truffleTestGenerator && truffleTestGenerator.testsPath) || "test"
+const jsonFilePath = cwd + `/${configContractsPath}/${process.argv[2]}.json`
+
+let testFilePath = cwd + `/${configTestsPath}/${process.argv[2]}_test.js`
+let contractFile
 
 try {
-  contract = JSON.parse(fs.readFileSync(jsonFile, 'utf8'))
+  contractFile = JSON.parse(fs.readFileSync(jsonFilePath, 'utf8'))
 } catch (err) {
   console.error('Please provide a contract name and be in the top-level directory of your Truffle project\n', err)
   return err
 }
 
-const constructor = getConstructor(contract)
+const constructor = getConstructor(contractFile)
 const constructorParams = genConstructorParams(constructor)
 const constructorLine = genConstructorLine(constructor)
-const testContent = genTestContent(contract, constructorParams, constructorLine)
+const testContent = genTestContent(contractFile, constructorParams, constructorLine)
 
-if(fs.existsSync(testFile)) {
-  testFile = testFile.replace('.js', '-new.js')
+if (fs.existsSync(testFilePath)) {
+  testFilePath = testFilePath.replace('.js', '-new.js')
 }
 
-fs.writeFile(testFile, testContent, (error) => {
-  if(error) return console.error(error)
+fs.writeFile(testFilePath, testContent, (error) => {
+  if (error) return console.error(error)
 })
 
-console.log('Wrote to:', testFile)
+console.log('Wrote to:', testFilePath)
