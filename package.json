@@ -1,7 +1,7 @@
 {
   "name": "@cryptofc/truffle-test-generator",
   "author": "Agu Rodríguez",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "A test file generator for the Truffle framework",
   "bin": {
     "ttg": "./testGen.js"

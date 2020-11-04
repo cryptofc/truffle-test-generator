@@ -31,8 +31,8 @@ const genConstructorLine = (constructor) => {
       line += constructor.inputs[i].name + ', '
     }
   }
-  line += '{from: maintainer}'
-  return line
+  line += '{ from: maintainer }'
+  return `${line};`
 }
 
 const genTestContent = (contract, constructorParams, constructorLine) => {
@@ -48,12 +48,12 @@ const genTestContent = (contract, constructorParams, constructorLine) => {
 const ${contract.contractName} = artifacts.require('${contract.contractName}')
 
 contract('${contract.contractName}', (accounts) => {
-  const maintainer = accounts[0]
-  const user1 = accounts[1]
-  const user2 = accounts[2]
-  const stranger = accounts[3]
+  const maintainer = accounts[0];
+  const user1 = accounts[1];
+  const user2 = accounts[2];
+  const stranger = accounts[3];
 
-  let ${contract.contractName.toLowerCase()}`
+  let ${contract.contractName.toLowerCase()}`;
 
   if (constructorParams.length > 0) {
     testContent += `
@@ -61,15 +61,15 @@ contract('${contract.contractName}', (accounts) => {
   // Be sure to update these constructor values`
     for (let i = 0; i < constructorParams.length; i++) {
       testContent += `
-  let ${constructorParams[i]} = 0`
+  let ${constructorParams[i]} = 0;`
     }
   }
 
   testContent += `
 
   beforeEach(async () => {
-    ${contract.contractName.toLowerCase()} = await ${contract.contractName}.new(${constructorLine})
-  })
+    ${contract.contractName.toLowerCase()} = await ${contract.contractName}.new(${constructorLine});
+  });
 `
 
   for (let i = 0; i < contract.abi.length; i++) {
@@ -77,13 +77,13 @@ contract('${contract.contractName}', (accounts) => {
       testContent += `
   describe('${contract.abi[i].name}', () => {
 
-  })
+  });
 `
     }
   }
 
   testContent +=
-`})
+`});
 `
   return testContent
 }
